@@ -1,0 +1,30 @@
+import mongoose from "mongoose";
+
+const transactionSchema = new mongoose.Schema({
+    store: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Store'
+    },
+    executive: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Executive'
+    },
+    amount: {
+        type: Number,
+        required: true
+    },
+    date: {
+        type: Date,
+        required: true
+    },
+    entry: {
+        type: String,
+        required: true,
+        enum: ['debit', 'credit']
+    },
+}, { timestamps: true })
+
+const model = mongoose.model('Transaction', transactionSchema)
+export default model
