@@ -26,14 +26,14 @@ export const createExecutive = async (req, res) => {
         const { username, password, phone, route } = req.body
         const existingExecutives = await Executive.findOne({
             $or: [
-                { username: username },
+                { username: username.toLowerCase() },
                 { phone: phone }
             ]
         })
         if (existingExecutives)
             return res.send({ success: false, message: 'Username Or Phone Already Taken' })
         await Executive.create({
-            username: username,
+            username: username.toLowerCase(),
             password: password,
             phone: phone,
             route: route,
@@ -51,14 +51,14 @@ export const updateExecutive = async (req, res) => {
         const { username, password, phone, route } = req.body
         const existingExecutives = await Executive.findOne({
             $or: [
-                { username: username },
+                { username: username.toLowerCase() },
                 { phone: phone }
             ]
         })
         if (existingExecutives)
             return res.send({ success: false, message: 'Username Or Phone Already Taken' })
         await Executive.findByIdAndUpdate(req.params.id, {
-            username: username,
+            username: username.toLowerCase(),
             password: password,
             phone: phone,
             route: route,

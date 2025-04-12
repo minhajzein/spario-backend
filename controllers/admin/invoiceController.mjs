@@ -20,19 +20,23 @@ export const createInvoice = async (req, res) => {
         if (!storeData) {
             return res.status(404).json({ success: false, message: "Store not found" });
         }
-        await Transaction.create({
+        const transaction = await Transaction.create({
             store: storeData._id,
             amount: amount,
             date: billDate,
             executive: storeData.executive,
             entry: "debit"
         });
+        storeData.balance += Number(amount);
+        storeData.totalOutstanding += Number(amount);
+        await storeData.save();
         await Invoice.create({
-            store,
-            amount,
-            billDate,
-            dueDate,
-            reference
+            transactionId: transaction._id,
+            store: store,
+            amount: amount,
+            billDate: billDate,
+            dueDate: dueDate,
+            reference: reference
         });
         res.status(201).json({ success: true, message: "Invoice created successfully" });
     } catch (error) {

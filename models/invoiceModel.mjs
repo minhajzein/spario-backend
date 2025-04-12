@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const invoiceSchema = new mongoose.Schema({
+    transactionId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Transaction'
+    },
     store: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
