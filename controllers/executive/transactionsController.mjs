@@ -14,8 +14,8 @@ export const getAllTransactions = async (req, res) => {
 export const getTransactionsByExecutive = async (req, res) => {
     try {
         const transactions = await Transaction.find({ executive: req.params.id }).sort({ createdAt: -1 }).populate({
-            path:'store',
-            select:'storeName'
+            path: 'store',
+            select: 'storeName'
         })
         res.status(200).json(transactions)
     } catch (error) {
@@ -41,7 +41,8 @@ export const createTransaction = async (req, res) => {
             date: date,
             store: store,
             executive: executive,
-            amount: amount
+            amount: amount,
+            description: 'Field Collection'
         })
 
         res.send({ success: true, message: 'Transaction Added Successfully' })

@@ -31,7 +31,8 @@ export const createInvoice = async (req, res) => {
             amount: amount,
             date: billDate,
             executive: storeData.executive,
-            entry: "debit"
+            entry: "debit",
+            description: 'Invoice'
         });
         storeData.balance += Number(amount);
         storeData.totalOutstanding += Number(amount);

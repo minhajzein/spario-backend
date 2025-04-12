@@ -24,6 +24,10 @@ const transactionSchema = new mongoose.Schema({
         required: true,
         enum: ['debit', 'credit']
     },
+    description: {
+        type: String,
+        required: true,
+    }
 }, { timestamps: true })
 
 const model = mongoose.model('Transaction', transactionSchema)

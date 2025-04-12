@@ -1,4 +1,6 @@
+import dayjs from 'dayjs'
 import Store from '../../models/storeModel.mjs'
+import Transaction from '../../models/transactionModel.mjs'
 
 export const getAllStores = async (req, res) => {
     try {
@@ -32,7 +34,7 @@ export const createStore = async (req, res) => {
         const existingStores = await Store.find({ storeName: storeName })
         if (existingStores[0] !== undefined)
             return res.send({ success: false, message: 'Store Already Exists' })
-        await Store.create({
+        const storeData = await Store.create({
             storeName: storeName,
             ownerName: ownerName,
             contactNumber: contactNumber,
@@ -41,6 +43,14 @@ export const createStore = async (req, res) => {
             balance: openingBalance,
             paidAmount: 0,
             totalOutstanding: openingBalance
+        })
+        await Transaction.create({
+            store: storeData._id,
+            amount: openingBalance,
+            date: dayjs().toString(),
+            executive: executive,
+            entry: 'debit',
+            description: 'Opening Balance'
         })
         res.send({ success: true, message: 'Store Created Successfully' })
     } catch (error) {
