@@ -3,7 +3,10 @@ import Store from '../../models/storeModel.mjs'
 
 export const getAllTransactions = async (req, res) => {
     try {
-        const transactions = await Transaction.find().sort({ createdAt: -1 })
+        const transactions = await Transaction.find().sort({ createdAt: -1 }).populate({
+            path: 'store',
+            select: 'storeName'
+        })
         res.status(200).json(transactions)
     } catch (error) {
         console.log(error);
