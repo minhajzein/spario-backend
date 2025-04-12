@@ -4,6 +4,7 @@ import { createStore, deleteStore, getAllStores, updateStore } from "../../contr
 import { createExecutive, deleteExecutive, getAllExecutives, getAllExecutivesByRoute, updateExecutive } from "../../controllers/admin/executiveController.mjs";
 import { createRoute, getAllRoutes } from "../../controllers/admin/routeController.mjs";
 import { createInvoice, getInvoices } from "../../controllers/admin/invoiceController.mjs";
+import { getAllTransactions } from "../../controllers/executive/transactionsController.mjs";
 
 const router = Router()
 
@@ -38,6 +39,12 @@ router.route('/routes')
 router.route('/invoices')
     .get(getInvoices)
     .post(createInvoice)
+
+// transactions ==============================================================================================================
+router.route('/transactions')
+    .get(getAllTransactions)
+
+
 
 
 export default router
