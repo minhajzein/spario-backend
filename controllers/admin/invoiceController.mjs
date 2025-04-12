@@ -15,7 +15,13 @@ export const getInvoices = async (req, res) => {
 export const createInvoice = async (req, res) => {
     try {
         const { store, amount, billDate, dueDate, reference } = req.body;
-
+        const exists = await Invoice.findOne({ reference: reference })
+        if (exists) {
+            return res.status(400).json({ success: false, message: "Invoice with this reference already exists" });
+        }
+        if (!store || !amount || !billDate || !dueDate || !reference) {
+            return res.status(400).json({ success: false, message: "All fields are required" });
+        }
         const storeData = await Store.findById(store);
         if (!storeData) {
             return res.status(404).json({ success: false, message: "Store not found" });
@@ -49,6 +55,13 @@ export const updateInvoice = async (req, res) => {
     try {
         const { id } = req.params;
         const { store, amount, billDate, dueDate, reference } = req.body;
+        const exists = await Invoice.findOne({ reference: reference })
+        if (exists) {
+            return res.status(400).json({ success: false, message: "Invoice with this reference already exists" });
+        }
+        if (!store || !amount || !billDate || !dueDate || !reference) {
+            return res.status(400).json({ success: false, message: "All fields are required" });
+        }
         await Invoice.findByIdAndUpdate(id, {
             store: store,
             amount: amount,

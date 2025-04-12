@@ -25,7 +25,8 @@ const invoiceSchema = new mongoose.Schema({
     },
     reference: {
         type: Number,
-        required: true
+        required: true,
+        unique: true
     }
 }, { timestamps: true })
 
