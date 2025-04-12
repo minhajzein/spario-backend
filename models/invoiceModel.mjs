@@ -10,7 +10,7 @@ const invoiceSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    date: {
+    billDate: {
         type: Date,
         required: true
     },

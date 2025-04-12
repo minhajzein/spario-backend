@@ -3,6 +3,7 @@ import { getDashboard } from "../../controllers/admin/dashboardController.mjs";
 import { createStore, deleteStore, getAllStores, updateStore } from "../../controllers/admin/storeController.mjs";
 import { createExecutive, deleteExecutive, getAllExecutives, getAllExecutivesByRoute, updateExecutive } from "../../controllers/admin/executiveController.mjs";
 import { createRoute, getAllRoutes } from "../../controllers/admin/routeController.mjs";
+import { createInvoice, getInvoices } from "../../controllers/admin/invoiceController.mjs";
 
 const router = Router()
 
@@ -33,6 +34,10 @@ router.route('/routes')
     .get(getAllRoutes)
     .post(createRoute)
 
+// invoices ==============================================================================================================
+router.route('/invoices')
+    .get(getInvoices)
+    .post(createInvoice)
 
 
 export default router
