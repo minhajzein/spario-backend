@@ -28,9 +28,8 @@ export const getDashboard = async (req, res) => {
             }
         });
 
-        console.log("Totals:", totals);
         const totalStores = await Store.find().countDocuments()
-        const totalExecutives = await Executive.find().countDocuments()
+        const totalExecutives = await Executive.find({ role: 'executive' }).countDocuments()
         res.json({
             totals,
             totalStores,
