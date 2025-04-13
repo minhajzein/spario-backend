@@ -6,7 +6,7 @@ export const getAllTransactions = async (req, res) => {
         const transactions = await Transaction.find().sort({ createdAt: -1 }).populate({
             path: 'store',
             select: 'storeName'
-        }).populate({ path: 'user', select: 'username' })
+        }).populate({ path: 'executive', select: 'username' })
         res.status(200).json(transactions)
     } catch (error) {
         console.log(error);

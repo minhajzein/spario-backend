@@ -9,7 +9,7 @@ const transactionSchema = new mongoose.Schema({
     executive: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'Executive'
+        ref: 'User'
     },
     amount: {
         type: Number,
