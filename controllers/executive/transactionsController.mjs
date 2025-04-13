@@ -14,6 +14,16 @@ export const getAllTransactions = async (req, res) => {
     }
 }
 
+export const getTransactionsByStore = async (req, res) => {
+    try {
+        const transactions = await Transaction.find({ store: req.params.id }).sort({ createdAt: -1 })
+        res.status(200).json(transactions)
+    } catch (error) {
+        console.log(error);
+        res.send({ success: false, message: 'Internal Server Error' })
+    }
+}
+
 export const getTransactionsByExecutive = async (req, res) => {
     try {
         const transactions = await Transaction.find({ executive: req.params.id }).sort({ createdAt: -1 }).populate({
