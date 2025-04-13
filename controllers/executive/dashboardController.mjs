@@ -8,8 +8,10 @@ export const getDashboard = async (req, res) => {
         const result = await Transaction.aggregate([
             {
                 $match: {
-                    executive: req.params.id,
-                },
+                    executive: new mongoose.Types.ObjectId(req.params.id),
+                }
+            },
+            {
                 $group: {
                     _id: "$entry",
                     totalAmount: { $sum: "$amount" }
