@@ -33,7 +33,7 @@ export const getExecutiveById = async (req, res) => {
                 $match: {
                     executive: new mongoose.Types.ObjectId(executive._id), // or whatever your ID source
                     entry: 'credit',
-                    description: 'Field Collections'
+                    description: 'Field Collection'
                 }
             },
             {
