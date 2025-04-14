@@ -58,7 +58,7 @@ export const getExecutiveById = async (req, res) => {
             }
         ]);
         const totalToCollect = toCollect.length > 0 ? toCollect[0].totalToCollect : 0;
-        res.status(200).json({ executive: executive, totalCollected: total, totalToCollect: totalToCollect })
+        res.status(200).json({ ...executive, totalCollected: total, totalToCollect: totalToCollect })
     } catch (error) {
         console.log(error);
         res.send({ success: false, message: 'Internal Server Error' })
