@@ -25,7 +25,37 @@ export const getExecutiveById = async (req, res) => {
     try {
         const executive = await Executive.findById(req.params.id)
         if (!executive) return res.send({ success: false, message: 'Executive Not Found' })
-        res.status(200).json(executive)
+        const result = await Transaction.aggregate([
+            {
+                $match: {
+                    executive: new mongoose.Types.ObjectId(executive._id), // or whatever your ID source
+                    entry: 'credit',
+                    description: 'Field Collections'
+                }
+            },
+            {
+                $group: {
+                    _id: '$executive',
+                    totalCollected: { $sum: '$amount' }
+                }
+            }
+        ]);
+        const total = result.length > 0 ? result[0].totalCollected : 0;
+        const toCollect = await Store.aggregate([
+            {
+                $match: {
+                    executive: new mongoose.Types.ObjectId(executiveId)
+                }
+            },
+            {
+                $group: {
+                    _id: '$executive',
+                    totalToCollect: { $sum: '$balance' }
+                }
+            }
+        ]);
+        const totalToCollect = toCollect.length > 0 ? toCollect[0].totalToCollect : 0;
+        res.status(200).json({ executive: executive, totalCollected: total, totalToCollect: totalToCollect })
     } catch (error) {
         console.log(error);
         res.send({ success: false, message: 'Internal Server Error' })
