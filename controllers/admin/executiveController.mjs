@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import Transaction from '../../models/transactionModel.mjs'
 import Executive from '../../models/userModel.mjs'
 
@@ -44,7 +45,7 @@ export const getExecutiveById = async (req, res) => {
         const toCollect = await Store.aggregate([
             {
                 $match: {
-                    executive: new mongoose.Types.ObjectId(executiveId)
+                    executive: new mongoose.Types.ObjectId(executive._id)
                 }
             },
             {
