@@ -1,6 +1,8 @@
 import mongoose from 'mongoose'
 import Transaction from '../../models/transactionModel.mjs'
 import Executive from '../../models/userModel.mjs'
+import Store from '../../models/storeModel.mjs'
+
 
 export const getAllExecutives = async (req, res) => {
     try {
