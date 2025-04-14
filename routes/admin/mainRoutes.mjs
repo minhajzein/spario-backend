@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { getDashboard } from "../../controllers/admin/dashboardController.mjs";
 import { createStore, deleteStore, getAllStores, updateStore } from "../../controllers/admin/storeController.mjs";
-import { createExecutive, deleteExecutive, getAllExecutives, getAllExecutivesByRoute, updateExecutive } from "../../controllers/admin/executiveController.mjs";
+import { createExecutive, deleteExecutive, getAllExecutives, getAllExecutivesByRoute, getExecutiveById, updateExecutive } from "../../controllers/admin/executiveController.mjs";
 import { createRoute, getAllRoutes } from "../../controllers/admin/routeController.mjs";
 import { createInvoice, getInvoices } from "../../controllers/admin/invoiceController.mjs";
 import { getAllTransactions } from "../../controllers/executive/transactionsController.mjs";
@@ -25,6 +25,7 @@ router.route('/executives')
     .post(createExecutive)
 
 router.route('/executives/:id')
+    .get(getExecutiveById)
     .put(updateExecutive)
     .delete(deleteExecutive)
 

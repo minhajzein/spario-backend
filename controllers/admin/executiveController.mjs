@@ -1,4 +1,4 @@
-
+import Transaction from '../../models/transactionModel.mjs'
 import Executive from '../../models/userModel.mjs'
 
 export const getAllExecutives = async (req, res) => {
@@ -15,6 +15,17 @@ export const getAllExecutivesByRoute = async (req, res) => {
     try {
         const executives = await Executive.find({ route: req.params.route }).sort({ createdAt: -1 })
         res.status(200).json(executives)
+    } catch (error) {
+        console.log(error);
+        res.send({ success: false, message: 'Internal Server Error' })
+    }
+}
+
+export const getExecutiveById = async (req, res) => {
+    try {
+        const executive = await Executive.findById(req.params.id)
+        if (!executive) return res.send({ success: false, message: 'Executive Not Found' })
+        res.status(200).json(executive)
     } catch (error) {
         console.log(error);
         res.send({ success: false, message: 'Internal Server Error' })

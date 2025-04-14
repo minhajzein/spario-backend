@@ -13,7 +13,6 @@ router.post('/transactions', createTransaction)
 router.get('/transactions/:id', getTransactionsByExecutive)
 router.get('/transactions/store/:id', getTransactionsByStore)
 
-
 // Stores ===============================================================================================================
 router.get('/stores/:id', getStoresByExecutive)
 
