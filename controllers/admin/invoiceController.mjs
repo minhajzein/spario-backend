@@ -33,7 +33,8 @@ export const createInvoice = async (req, res) => {
             date: billDate,
             executive: storeData.executive,
             entry: "debit",
-            description: reference
+            description: reference,
+            type: "invoice",
         });
 
         storeData.balance += Number(amount);
@@ -46,7 +47,7 @@ export const createInvoice = async (req, res) => {
             amount: amount,
             billDate: billDate,
             dueDate: dueDate,
-            reference: reference
+            reference: reference,
         });
         res.status(201).json({ success: true, message: "Invoice created successfully" });
     } catch (error) {
