@@ -34,7 +34,7 @@ export const createStore = async (req, res) => {
         const existingStores = await Store.find({ storeName: storeName })
         if (existingStores[0] !== undefined)
             return res.send({ success: false, message: 'Store Already Exists' })
-        const storeData = await Store.create({
+        await Store.create({
             storeName: storeName,
             ownerName: ownerName,
             contactNumber: contactNumber,

@@ -27,11 +27,6 @@ const transactionSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['cash', 'cheque', 'rtgs', 'invoice']
-    },
-    description: {
-        type: String,
-        required: true,
     }
 }, { timestamps: true })
 

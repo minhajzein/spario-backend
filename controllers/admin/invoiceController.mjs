@@ -33,8 +33,7 @@ export const createInvoice = async (req, res) => {
             date: billDate,
             executive: storeData.executive,
             entry: "debit",
-            description: reference,
-            type: "invoice",
+            type: reference,
         });
 
         storeData.balance += Number(amount);
