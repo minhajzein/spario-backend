@@ -45,6 +45,7 @@ export const createTransaction = async (req, res) => {
         if (!foundStore) {
             return res.status(404).send({ success: false, message: 'Store not found' })
         }
+
         foundStore.paidAmount += Number(amount)
         foundStore.balance -= Number(amount)
         await foundStore.save()
