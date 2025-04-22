@@ -39,7 +39,7 @@ export const getTransactionsByExecutive = async (req, res) => {
 
 export const createTransaction = async (req, res) => {
     try {
-        const { entry, date, store, executive, amount } = req.body
+        const { entry, date, store, executive, amount, type } = req.body
 
         const foundStore = await Store.findById(store)
         if (!foundStore) {
@@ -55,7 +55,7 @@ export const createTransaction = async (req, res) => {
             store: store,
             executive: executive,
             amount: amount,
-            description: 'Field Collection'
+            type: type
         })
 
         res.send({ success: true, message: 'Transaction Added Successfully' })
