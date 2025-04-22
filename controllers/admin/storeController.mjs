@@ -44,14 +44,6 @@ export const createStore = async (req, res) => {
             paidAmount: 0,
             totalOutstanding: openingBalance
         })
-        await Transaction.create({
-            store: storeData._id,
-            amount: openingBalance,
-            date: dayjs().toString(),
-            executive: executive,
-            entry: 'debit',
-            description: 'Opening Balance'
-        })
         res.send({ success: true, message: 'Store Created Successfully' })
     } catch (error) {
         console.log(error);
