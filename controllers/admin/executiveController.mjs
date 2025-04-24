@@ -80,7 +80,8 @@ export const createExecutive = async (req, res) => {
             username: username.toLowerCase(),
             password: password,
             phone: phone,
-            role: 'executive'
+            role: 'executive',
+            status: 'active'
         })
         res.send({ success: true, message: 'Executive Created Successfully' })
     } catch (error) {
