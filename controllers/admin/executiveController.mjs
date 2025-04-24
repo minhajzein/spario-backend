@@ -67,7 +67,7 @@ export const getExecutiveById = async (req, res) => {
 
 export const createExecutive = async (req, res) => {
     try {
-        const { username, password, phone, route } = req.body
+        const { username, password, phone } = req.body
         const existingExecutives = await Executive.findOne({
             $or: [
                 { username: username.toLowerCase() },
@@ -92,7 +92,7 @@ export const createExecutive = async (req, res) => {
 
 export const updateExecutive = async (req, res) => {
     try {
-        const { username, password, phone, route } = req.body
+        const { username, password, phone } = req.body
         const existingExecutives = await Executive.findOne({
             $or: [
                 { username: username.toLowerCase() },
@@ -105,7 +105,6 @@ export const updateExecutive = async (req, res) => {
             username: username.toLowerCase(),
             password: password,
             phone: phone,
-            route: route,
         })
         res.send({ success: true, message: 'Executive Updated Successfully' })
     } catch (error) {
