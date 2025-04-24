@@ -10,7 +10,8 @@ export const login = async (req, res) => {
         const { username, password } = req.body
 
         const user = await User.findOne({ username: username })
-
+        if (user.status === 'inactive')
+            return res.status(401).send({ success: false, message: 'Your account is inactive' })
         if (user) {
             const exactPassword = user.role === 'admin' ?
                 await bcrypt.compare(password, user.password)

@@ -122,3 +122,16 @@ export const deleteExecutive = async (req, res) => {
         res.send({ success: false, message: 'Internal Server Error' })
     }
 }
+
+export const changeStatusExecutive = async (req, res) => {
+    try {
+        const { status } = req.body
+        await Executive.findByIdAndUpdate(req.params.id, {
+            status: status
+        })
+        res.send({ success: true, message: 'Executive Status Updated Successfully' })
+    } catch (error) {
+        console.log(error);
+        res.send({ success: false, message: 'Internal Server Error' })
+    }
+}
