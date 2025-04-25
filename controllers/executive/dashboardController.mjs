@@ -9,7 +9,7 @@ export const getDashboard = async (req, res) => {
         const result = await Transaction.aggregate([
             {
                 $match: {
-                    executive: mongoose.Types.ObjectId(req.params.id),
+                    executive: new mongoose.Types.ObjectId(req.params.id),
                 }
             },
             {
