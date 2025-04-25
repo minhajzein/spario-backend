@@ -19,16 +19,20 @@ export const getDashboard = async (req, res) => {
                 }
             }
         ]);
-
+        const totalDebit = await Store.aggregate([{
+            $match: {
+                executive: new mongoose.Types.ObjectId(req.params.id),
+            }
+        }, {
+            $group: { _id: '$totalOutstanding', totalAmount: { $sum: "$totalOutstanding" } }
+        }])
         const totals = { credit: 0, debit: 0 };
         result.forEach(entry => {
             if (entry._id === 'credit') {
                 totals.credit = entry.totalAmount;
-            } else if (entry._id === 'debit') {
-                totals.debit = entry.totalAmount;
             }
         });
-
+        totals.debit = totalDebit[0].totalAmount
         const totalStores = await Store.find({ executive: req.params.id }).countDocuments()
         res.json({ totalStores, totals })
     } catch (error) {
