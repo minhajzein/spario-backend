@@ -13,13 +13,15 @@ export const getDashboard = async (req, res) => {
                 }
             }
         ]);
-
+        const totalDebit = await Store.aggregate([{
+            $group: { totalAmount: { $sum: "$balance" } }
+        }])
         // Format the result into a more readable object
         const totals = {
             credit: 0,
             debit: 0,
         };
-        console.log(result);
+        console.log(totalDebit);
 
         result.forEach(entry => {
             if (entry._id === 'credit') {
