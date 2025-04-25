@@ -19,6 +19,7 @@ export const getDashboard = async (req, res) => {
             credit: 0,
             debit: 0,
         };
+        console.log(result);
 
         result.forEach(entry => {
             if (entry._id === 'credit') {
