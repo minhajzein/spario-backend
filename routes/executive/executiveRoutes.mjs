@@ -16,4 +16,8 @@ router.get('/transactions/store/:id', getTransactionsByStore)
 // Stores ===============================================================================================================
 router.get('/stores/:id', getStoresByExecutive)
 
+// Invoices ============================================================================================================
+router.get('/invoices/:id', getStoresByExecutive)
+
+
 export default router

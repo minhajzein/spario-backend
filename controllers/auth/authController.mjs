@@ -10,50 +10,50 @@ export const login = async (req, res) => {
         const { username, password } = req.body
 
         const user = await User.findOne({ username: username })
+
+        if (!user) return res.status(401).send({ success: false, message: 'Entered username is not a valid username' })
+
         if (user.status === 'inactive')
             return res.status(401).send({ success: false, message: 'Your account is inactive' })
-        if (user) {
-            const exactPassword = user.role === 'admin' ?
-                await bcrypt.compare(password, user.password)
-                : user.password === password
 
-            if (exactPassword) {
-                const userToken = jwt.sign(
-                    {
-                        'UserInfo':
-                        {
-                            'username': user.username,
-                            'role': user.role
-                        }
-                    },
-                    process.env.ACCESS_TOKEN_SECRET,
-                    {
-                        expiresIn: '15m'
-                    }
-                )
-                const refreshToken = jwt.sign(
-                    { 'id': user._id },
-                    process.env.REFRESH_TOKEN_SECRET,
-                    {
-                        expiresIn: '1d'
-                    }
-                )
-                res.status(200)
-                    .cookie('user', refreshToken, {
-                        httpOnly: true,
-                        secure: true,
-                        sameSite: 'None',
-                        maxAge: 24 * 60 * 60 * 1000
-                    })
-                    .send({ success: true, token: userToken, user: user })
+        const exactPassword = user.role === 'admin' ?
+            await bcrypt.compare(password, user.password)
+            : user.password === password
 
-            } else {
-                res.status(403).send({ success: false, message: 'Entered password is incorrect' })
-            }
+        if (exactPassword) {
+            const userToken = jwt.sign(
+                {
+                    'UserInfo':
+                    {
+                        'username': user.username,
+                        'role': user.role
+                    }
+                },
+                process.env.ACCESS_TOKEN_SECRET,
+                {
+                    expiresIn: '15m'
+                }
+            )
+            const refreshToken = jwt.sign(
+                { 'id': user._id },
+                process.env.REFRESH_TOKEN_SECRET,
+                {
+                    expiresIn: '1d'
+                }
+            )
+            res.status(200)
+                .cookie('user', refreshToken, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'None',
+                    maxAge: 24 * 60 * 60 * 1000
+                })
+                .send({ success: true, token: userToken, user: user })
 
         } else {
-            res.status(401).send({ success: false, message: 'Entered username is not a valid username' })
+            res.status(403).send({ success: false, message: 'Entered password is incorrect' })
         }
+
     }
     catch (error) {
         console.log(error);
