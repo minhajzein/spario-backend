@@ -21,15 +21,14 @@ export const getDashboard = async (req, res) => {
             credit: 0,
             debit: 0,
         };
-        console.log(totalDebit);
 
         result.forEach(entry => {
             if (entry._id === 'credit') {
                 totals.credit = entry.totalAmount;
-            } else if (entry._id === 'debit') {
-                totals.debit = entry.totalAmount;
             }
         });
+
+        totals.debit = totalDebit[0].totalAmount || 0;
 
         const totalStores = await Store.find().countDocuments()
         const totalExecutives = await Executive.find({ role: 'executive' }).countDocuments()
