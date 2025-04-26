@@ -69,14 +69,14 @@ export const createExecutive = async (req, res) => {
         const { username, password, phone } = req.body
         const existingExecutives = await Executive.findOne({
             $or: [
-                { username: username.toLowerCase() },
+                { username: username },
                 { phone: phone }
             ]
         })
         if (existingExecutives)
             return res.send({ success: false, message: 'Username Or Phone Already Taken' })
         await Executive.create({
-            username: username.toLowerCase(),
+            username: username,
             password: password,
             phone: phone,
             role: 'executive',
