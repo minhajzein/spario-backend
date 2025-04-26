@@ -24,7 +24,7 @@ export const getDashboard = async (req, res) => {
                 executive: new mongoose.Types.ObjectId(req.params.id),
             }
         }, {
-            $group: { _id: '$totalOutstanding', totalAmount: { $sum: "$totalOutstanding" } }
+            $group: { _id: null, totalAmount: { $sum: "$totalOutstanding" } }
         }])
         const totals = { credit: 0, debit: 0 };
         result.forEach(entry => {

@@ -14,8 +14,11 @@ export const getDashboard = async (req, res) => {
             }
         ]);
         const totalDebit = await Store.aggregate([{
-            $group: { _id: '$totalOutstanding', totalAmount: { $sum: "$totalOutstanding" } }
+            $group: { _id: null, totalAmount: { $sum: "$totalOutstanding" } }
         }])
+
+        console.log(totalDebit);
+
         // Format the result into a more readable object
         const totals = {
             credit: 0,
