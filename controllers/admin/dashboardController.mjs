@@ -17,7 +17,7 @@ export const getDashboard = async (req, res) => {
             $group: { _id: null, totalAmount: { $sum: "$totalOutstanding" } }
         }])
 
-        console.log(totalDebit);
+
 
         // Format the result into a more readable object
         const totals = {
@@ -31,7 +31,7 @@ export const getDashboard = async (req, res) => {
             }
         });
 
-        totals.debit = totalDebit[0].totalAmount || 0;
+        totals.debit = totalDebit[0]?.totalAmount || 0;
 
         const totalStores = await Store.find().countDocuments()
         const totalExecutives = await Executive.find({ role: 'executive' }).countDocuments()
