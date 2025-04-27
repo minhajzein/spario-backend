@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createTransaction, getTransactionsByExecutive, getTransactionsByStore } from "../../controllers/executive/transactionsController.mjs";
+import { createTransaction, deleteTransaction, getTransactionsByExecutive, getTransactionsByStore, updateTransaction } from "../../controllers/executive/transactionsController.mjs";
 import { getStoresByExecutive } from "../../controllers/admin/storeController.mjs";
 import { getDashboard } from "../../controllers/executive/dashboardController.mjs";
 import { getInvoices } from "../../controllers/executive/invoiceController.mjs";
@@ -13,6 +13,8 @@ router.get('/dashboard/:id', getDashboard)
 router.post('/transactions', createTransaction)
 router.get('/transactions/:id', getTransactionsByExecutive)
 router.get('/transactions/store/:id', getTransactionsByStore)
+router.put('/transactions/:id', updateTransaction)
+router.delete('/transactions/:id', deleteTransaction)
 
 // Stores ===============================================================================================================
 router.get('/stores/:id', getStoresByExecutive)

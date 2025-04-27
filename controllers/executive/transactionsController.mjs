@@ -65,3 +65,51 @@ export const createTransaction = async (req, res) => {
         res.send({ success: false, message: 'Internal Server Error' })
     }
 }
+
+
+export const updateTransaction = async (req, res) => {
+    try {
+        const id = req.params.id
+        const { date, store, amount, type } = req.body
+
+        const transaction = await Transaction.findById(id)
+
+        const relatedStore = await Store.findById(store)
+        relatedStore.balance += transaction.amount
+        relatedStore.paidAmount -= transaction.amount
+
+        transaction.store = store
+        transaction.date = date
+        transaction.type = type
+        transaction.amount = amount
+        await transaction.save()
+
+        relatedStore.balance -= amount
+        relatedStore.paidAmount += amount
+        await relatedStore.save()
+        res.send({ success: true, message: 'Transaction Updated Successfully' })
+    } catch (error) {
+        console.log(error);
+        res.send({ success: false, message: 'Internal Server Error' })
+    }
+}
+
+
+export const deleteTransaction = async (req, res) => {
+    try {
+        const id = req.params.id
+        const transaction = await Transaction.findById(id)
+
+        const store = await Store.findById(transaction.store)
+        store.paidAmount -= transaction.amount
+        store.balance += transaction.amount
+        await store.save()
+
+        await transaction.deleteOne()
+
+        res.send({ success: true, message: 'Transaction Deleted Successfully' })
+    } catch (error) {
+        console.log(error);
+        res.send({ success: false, message: 'Internal Server Error' })
+    }
+}
