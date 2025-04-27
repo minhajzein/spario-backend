@@ -3,12 +3,12 @@ import Transaction from '../../models/transactionModel.mjs'
 
 export const createReturn = async (req, res) => {
     try {
-        const { store, amount, date, executive } = req.body
+        const { store, amount, date, executive, type } = req.body
         const transaction = await Transaction.create({
             store: store,
             entry: 'credit',
             amount: amount,
-            type: 'return',
+            type: type,
             date: date,
             executive: executive
         })
@@ -17,7 +17,8 @@ export const createReturn = async (req, res) => {
             executive: executive,
             amount: amount,
             date: date,
-            transaction: transaction._id
+            transaction: transaction._id,
+            type: type
         })
     } catch (error) {
         console.log(error);

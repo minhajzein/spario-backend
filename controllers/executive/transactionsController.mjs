@@ -84,8 +84,8 @@ export const updateTransaction = async (req, res) => {
         transaction.amount = amount
         await transaction.save()
 
-        relatedStore.balance -= amount
-        relatedStore.paidAmount += amount
+        relatedStore.balance -= Number(amount)
+        relatedStore.paidAmount += Number(amount)
         await relatedStore.save()
         res.send({ success: true, message: 'Transaction Updated Successfully' })
     } catch (error) {

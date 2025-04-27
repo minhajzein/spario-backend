@@ -21,6 +21,10 @@ const returnSchema = new mongoose.Schema({
     executive: {
         type: mongoose.Schema.Types.ObjectId,
         required: true
+    },
+    type: {
+        type: String,
+        required: true
     }
 }, { timestamps: true })
 
