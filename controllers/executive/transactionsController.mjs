@@ -3,7 +3,7 @@ import Store from '../../models/storeModel.mjs'
 
 export const getAllTransactions = async (req, res) => {
     try {
-        const transactions = await Transaction.find().sort({ createdAt: -1 }).populate({
+        const transactions = await Transaction.find({ entry: 'credit' }).sort({ createdAt: -1 }).populate({
             path: 'store',
             select: 'storeName'
         }).populate({ path: 'executive', select: 'username' })
@@ -26,7 +26,7 @@ export const getTransactionsByStore = async (req, res) => {
 
 export const getTransactionsByExecutive = async (req, res) => {
     try {
-        const transactions = await Transaction.find({ executive: req.params.id }).sort({ createdAt: -1 }).populate({
+        const transactions = await Transaction.find({ $and: [{ executive: req.params.id }, { entry: 'credit' }] }).sort({ createdAt: -1 }).populate({
             path: 'store',
             select: 'storeName'
         })
