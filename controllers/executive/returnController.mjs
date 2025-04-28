@@ -62,7 +62,17 @@ export const getReturnsByExecutive = async (req, res) => {
 
 export const deleteReturn = async (req, res) => {
     try {
-        await Return.findByIdAndDelete(req.params.id)
+        const rtn = await Return.findById(req.params.id)
+
+        const store = await Store.findById(rtn.store)
+        store.paidAmount -= rtn.amount
+        store.balance += rtn.amount
+        await store.save()
+
+        await Transaction.findByIdAndDelete(rtn.transaction)
+
+        await rtn.deleteOne()
+
         res.send({ success: true, message: 'Return Deleted Successfully' })
     } catch (error) {
         console.log(error);
@@ -106,5 +116,7 @@ export const updateReturn = async (req, res) => {
         res.send({ success: false, message: 'Internal Server Error' })
     }
 }
+
+
 
 
