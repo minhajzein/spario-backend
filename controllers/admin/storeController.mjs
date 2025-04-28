@@ -1,5 +1,7 @@
 import Store from '../../models/storeModel.mjs'
-
+import Transaction from '../../models/transactionModel.mjs'
+import Invoice from '../../models/invoiceModel.mjs'
+import Return from '../../models/returnModel.mjs'
 
 
 export const getAllStores = async (req, res) => {
@@ -74,6 +76,9 @@ export const updateStore = async (req, res) => {
 
 export const deleteStore = async (req, res) => {
     try {
+        await Transaction.deleteMany({ store: req.params.id })
+        await Invoice.deleteMany({ store: req.params.id })
+        await Return.deleteMany({ store: req.params.id })
         await Store.findByIdAndDelete(req.params.id)
         res.send({ success: true, message: 'Store Deleted Successfully' })
     } catch (error) {
