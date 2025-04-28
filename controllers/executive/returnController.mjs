@@ -30,7 +30,7 @@ export const createReturn = async (req, res) => {
 
 export const getAllReturns = async (req, res) => {
     try {
-        const returns = await Return.find().sort({ createdAt: -1 })
+        const returns = await Return.find().sort({ createdAt: -1 }).populate('store')
         res.status(200).json(returns)
     } catch (error) {
         console.log(error);
@@ -41,7 +41,7 @@ export const getAllReturns = async (req, res) => {
 
 export const getReturnsByExecutive = async (req, res) => {
     try {
-        const returns = await Return.find({ executive: req.params.id }).sort({ createdAt: -1 })
+        const returns = await Return.find({ executive: req.params.id }).sort({ createdAt: -1 }).populate('store')
         res.status(200).json(returns)
     } catch (error) {
         console.log(error);
