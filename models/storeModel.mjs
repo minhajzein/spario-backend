@@ -31,6 +31,10 @@ const storeSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    openingBalance: {
+        type: Number,
+        required: true
+    },
     route: {
         type: String,
         required: true

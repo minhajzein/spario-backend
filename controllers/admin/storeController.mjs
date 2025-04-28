@@ -42,7 +42,8 @@ export const createStore = async (req, res) => {
             route: route,
             balance: openingBalance,
             paidAmount: 0,
-            totalOutstanding: openingBalance
+            totalOutstanding: openingBalance,
+            openingBalance: openingBalance
         })
         res.send({ success: true, message: 'Store Created Successfully' })
     } catch (error) {
