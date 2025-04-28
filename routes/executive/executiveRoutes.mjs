@@ -27,7 +27,7 @@ router.get('/invoices/:id', getInvoices)
 router.get('/returns', getAllReturns)
 router.get('/returns/:id', getReturnsByExecutive)
 router.post('/returns', createReturn)
-router.route('/return/:id')
+router.route('/returns/:id')
     .put(updateReturn)
     .delete(deleteReturn)
 
