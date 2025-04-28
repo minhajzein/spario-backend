@@ -16,11 +16,13 @@ const returnSchema = new mongoose.Schema({
     },
     transaction: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Transaction'
+        ref: 'Transaction',
+        required: true
     },
     executive: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'User'
     },
     type: {
         type: String,
