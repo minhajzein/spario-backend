@@ -3,7 +3,7 @@ import { getDashboard } from "../../controllers/admin/dashboardController.mjs";
 import { createStore, deleteStore, getAllStores, updateStore } from "../../controllers/admin/storeController.mjs";
 import { changeStatusExecutive, createExecutive, deleteExecutive, getAllExecutives, getAllExecutivesByRoute, getExecutiveById, updateExecutive } from "../../controllers/admin/executiveController.mjs";
 import { createRoute, getAllRoutes } from "../../controllers/admin/routeController.mjs";
-import { createInvoice, getInvoices } from "../../controllers/admin/invoiceController.mjs";
+import { createInvoice, deleteInvoice, getInvoices, updateInvoice } from "../../controllers/admin/invoiceController.mjs";
 import { getAllTransactions } from "../../controllers/executive/transactionsController.mjs";
 
 const router = Router()
@@ -41,6 +41,10 @@ router.route('/routes')
 router.route('/invoices')
     .get(getInvoices)
     .post(createInvoice)
+
+router.route('/invoices/:id')
+    .put(updateInvoice)
+    .delete(deleteInvoice)
 
 // transactions ==============================================================================================================
 router.route('/transactions')
