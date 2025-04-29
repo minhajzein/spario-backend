@@ -56,17 +56,27 @@ export const createStore = async (req, res) => {
 
 export const updateStore = async (req, res) => {
     try {
-        const { storeName, ownerName, contactNumber, executive, route } = req.body
-        const existingStores = await Store.find({ storeName: storeName })
-        if (existingStores[0] !== undefined)
-            return res.send({ success: false, message: 'Store Already Exists' })
-        await Store.findByIdAndUpdate(req.params.id, {
-            storeName: storeName,
-            ownerName: ownerName,
-            contactNumber: contactNumber,
-            route: route,
-            executive: executive,
-        })
+        const id = req.params.id
+
+        const { storeName, ownerName, contactNumber, executive, route, openingBalance } = req.body
+
+        const existingStores = await Store.findOne({ storeName: storeName })
+        if (existingStores) return res.send({ success: false, message: 'Store Already Exists' })
+
+        const store = await Store.findById(id)
+
+        const total = store.totalOutstanding - store.openingBalance
+
+
+        store.storeName = storeName
+        store.ownerName = ownerName
+        store.contactNumber = contactNumber
+        store.route = route
+        store.executive = executive
+        store.totalOutstanding = total + openingBalance
+        store.openingBalance = openingBalance
+        await store.save()
+
         res.send({ success: true, message: 'Store Updated Successfully' })
     } catch (error) {
         console.log(error);
@@ -76,10 +86,13 @@ export const updateStore = async (req, res) => {
 
 export const deleteStore = async (req, res) => {
     try {
-        await Transaction.deleteMany({ store: req.params.id })
-        await Invoice.deleteMany({ store: req.params.id })
-        await Return.deleteMany({ store: req.params.id })
-        await Store.findByIdAndDelete(req.params.id)
+        const id = req.params.id
+
+        await Transaction.deleteMany({ store: id })
+        await Invoice.deleteMany({ store: id })
+        await Return.deleteMany({ store: id })
+        await Store.findByIdAndDelete(id)
+
         res.send({ success: true, message: 'Store Deleted Successfully' })
     } catch (error) {
         console.log(error);
