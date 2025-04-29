@@ -59,7 +59,10 @@ export const updateInvoice = async (req, res) => {
     try {
         const { id } = req.params;
         const { store, amount, billDate, dueDate, reference } = req.body;
-        const exists = await Invoice.findOne({ reference: reference })
+
+        const invoice = await Invoice.findById(id)
+
+        const exists = await Invoice.findOne({ reference: { $ne: invoice.reference } })
         if (exists)
             return res.status(400).json({ success: false, message: "Invoice with this reference already exists" });
 
@@ -70,7 +73,7 @@ export const updateInvoice = async (req, res) => {
         if (!store || !amount || !billDate || !dueDate || !reference)
             return res.status(400).json({ success: false, message: "All fields are required" });
 
-        const invoice = await Invoice.findById(id)
+
 
         storeData.balance -= Number(invoice.amount);
         storeData.totalOutstanding -= Number(invoice.amount);
