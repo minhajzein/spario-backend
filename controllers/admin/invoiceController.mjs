@@ -62,7 +62,7 @@ export const updateInvoice = async (req, res) => {
 
         const invoice = await Invoice.findById(id)
 
-        const exists = await Invoice.findOne({ reference: { $ne: invoice.reference } })
+        const exists = await Invoice.findOne({ reference, _id: { $ne: id } });
         if (exists)
             return res.status(400).json({ success: false, message: "Invoice with this reference already exists" });
 
