@@ -60,7 +60,7 @@ export const updateStore = async (req, res) => {
 
         const { storeName, ownerName, contactNumber, executive, route, openingBalance } = req.body
 
-        const existingStores = await Store.findOne({ storeName: storeName })
+        const existingStores = await Store.findOne({ storeName: storeName, _id: { $ne: id } })
         if (existingStores) return res.send({ success: false, message: 'Store Already Exists' })
 
         const store = await Store.findById(id)
@@ -74,6 +74,7 @@ export const updateStore = async (req, res) => {
         store.route = route
         store.executive = executive
         store.totalOutstanding = total + openingBalance
+        store.balance = store.totalOutstanding - store.paidAmount
         store.openingBalance = openingBalance
         await store.save()
 

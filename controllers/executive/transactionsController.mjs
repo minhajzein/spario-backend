@@ -1,6 +1,8 @@
 import Transaction from '../../models/transactionModel.mjs'
 import Store from '../../models/storeModel.mjs'
 
+
+
 export const getAllTransactions = async (req, res) => {
     try {
         const transactions = await Transaction.find({ entry: 'credit' }).sort({ createdAt: -1 }).populate({
@@ -26,11 +28,41 @@ export const getTransactionsByStore = async (req, res) => {
 
 export const getTransactionsByExecutive = async (req, res) => {
     try {
-        const transactions = await Transaction.find({ $and: [{ executive: req.params.id }, { entry: 'credit' }] }).sort({ createdAt: -1 }).populate({
-            path: 'store',
-            select: 'storeName'
-        })
+        const { store, date, type, fromDate, toDate, page = 1, limit = 10 } = req.query;
+        const { id } = req.params
+
+        const query = {}
+        query.executive = id
+        query.entry = 'credit'
+        if (store && store !== 'null') query.store = store
+        if (type && type !== 'null') query.type = type
+        if ((fromDate || toDate) && fromDate !== 'null' && toDate !== 'null') {
+            query.date = {};
+            if (fromDate && fromDate !== 'null') query.date.$gte = new Date(fromDate);
+            if (toDate && toDate !== 'null') query.date.$lte = new Date(toDate);
+        }
+
+        if (date && date !== 'null') {
+            const parsedDate = new Date(date);
+            const nextDate = new Date(parsedDate);
+            nextDate.setDate(nextDate.getDate() + 1);
+
+            query.date = { $gte: parsedDate, $lt: nextDate };
+        }
+
+        const skip = (page - 1) * limit;
+
+        const [transactions, total] = await Promise.all([
+            Transaction.find(query)
+                .populate('store executive')
+                .sort({ date: -1 })
+                .skip(Number(skip))
+                .limit(Number(limit)),
+            Transaction.countDocuments(query)
+        ]);
+
         res.status(200).json(transactions)
+
     } catch (error) {
         console.log(error);
         res.send({ success: false, message: 'Internal Server Error' })
