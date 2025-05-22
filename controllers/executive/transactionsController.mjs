@@ -36,11 +36,6 @@ export const getTransactionsByExecutive = async (req, res) => {
         query.entry = 'credit'
         if (store && store !== 'null') query.store = store
         if (type && type !== 'null') query.type = type
-        if ((fromDate || toDate) && fromDate !== 'null' && toDate !== 'null') {
-            query.date = {};
-            if (fromDate && fromDate !== 'null') query.date.$gte = new Date(fromDate);
-            if (toDate && toDate !== 'null') query.date.$lte = new Date(toDate);
-        }
 
         if (date && date !== 'null') {
             const parsedDate = new Date(date);
@@ -49,6 +44,13 @@ export const getTransactionsByExecutive = async (req, res) => {
 
             query.date = { $gte: parsedDate, $lt: nextDate };
         }
+
+        if ((fromDate || toDate) && fromDate !== 'null' && toDate !== 'null') {
+            query.date = {};
+            if (fromDate && fromDate !== 'null') query.date.$gte = new Date(fromDate);
+            if (toDate && toDate !== 'null') query.date.$lte = new Date(toDate);
+        }
+
 
         const skip = (page - 1) * limit;
 
@@ -61,7 +63,7 @@ export const getTransactionsByExecutive = async (req, res) => {
             Transaction.countDocuments(query)
         ]);
 
-        res.status(200).json(transactions)
+        res.status(200).json({ total, transactions });
 
     } catch (error) {
         console.log(error);
