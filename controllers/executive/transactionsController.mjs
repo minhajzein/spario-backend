@@ -65,7 +65,7 @@ export const getTransactionsByExecutive = async (req, res) => {
         const { id } = req.params
 
         const query = {}
-        query.executive = id
+        if (!id || id === 'null') query.executive = id
         query.entry = 'credit'
         if (store && store !== 'null') query.store = store
         if (type && type !== 'null') query.type = type
