@@ -18,8 +18,15 @@ export const getAllStores = async (req, res) => {
 }
 
 export const getStoresByExecutive = async (req, res) => {
+    const { id } = req.params
+    const query = {}
+
+    if (id && id !== 'null') {
+        query.executive = id
+    }
+
     try {
-        const stores = await Store.find({ executive: req.params.id }).sort({ createdAt: -1 }).populate({
+        const stores = await Store.find(query).sort({ createdAt: -1 }).populate({
             path: 'executive',
             select: 'username'
         })
