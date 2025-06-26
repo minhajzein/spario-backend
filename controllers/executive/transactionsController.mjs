@@ -18,13 +18,46 @@ export const getAllTransactions = async (req, res) => {
 
 export const getTransactionsByStore = async (req, res) => {
     try {
-        const transactions = await Transaction.find({ store: req.params.id }).sort({ createdAt: -1 })
-        res.status(200).json(transactions)
+        const { date, fromDate, toDate, page = 1, limit } = req.query;
+        const { id } = req.params;
+
+        const query = { store: id };
+
+        if (date && date !== 'null') {
+            const parsedDate = new Date(date);
+            const nextDate = new Date(parsedDate);
+            nextDate.setDate(nextDate.getDate() + 1);
+            query.date = { $gte: parsedDate, $lt: nextDate };
+        }
+
+        if ((fromDate || toDate) && fromDate !== 'null' && toDate !== 'null') {
+            query.date = {};
+            if (fromDate && fromDate !== 'null') query.date.$gte = new Date(fromDate);
+            if (toDate && toDate !== 'null') query.date.$lte = new Date(toDate);
+        }
+
+        const findQuery = Transaction.find(query)
+            .populate('store executive')
+            .sort({ date: -1 });
+
+        // Only apply skip/limit if `limit` is present and not 'null'
+        if (limit && limit !== 'null') {
+            const skip = (Number(page) - 1) * Number(limit);
+            findQuery.skip(skip).limit(Number(limit));
+        }
+
+        const [transactions, total] = await Promise.all([
+            findQuery,
+            Transaction.countDocuments(query),
+        ]);
+
+        res.status(200).json({ transactions, total });
     } catch (error) {
         console.log(error);
-        res.send({ success: false, message: 'Internal Server Error' })
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
     }
-}
+};
+
 
 export const getTransactionsByExecutive = async (req, res) => {
     try {
