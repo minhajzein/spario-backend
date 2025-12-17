@@ -6,8 +6,31 @@ import Store from '../../models/storeModel.mjs'
 
 export const getAllExecutives = async (req, res) => {
     try {
-        const executives = await Executive.find({ role: 'executive' }).sort({ createdAt: -1 })
-        res.status(200).json(executives)
+        const { search, page = 1, limit } = req.query
+
+        const query = { role: 'executive' }
+
+        if (search && search !== 'null') {
+            const regex = new RegExp(search, 'i')
+            query.$or = [
+                { username: regex },
+                { phone: regex }
+            ]
+        }
+
+        const findQuery = Executive.find(query).sort({ createdAt: -1 })
+
+        if (limit && limit !== 'null') {
+            const skip = (Number(page) - 1) * Number(limit)
+            findQuery.skip(skip).limit(Number(limit))
+        }
+
+        const [executives, total] = await Promise.all([
+            findQuery,
+            Executive.countDocuments(query)
+        ])
+
+        res.status(200).json({ executives, total })
     } catch (error) {
         console.log(error);
         res.send({ success: false, message: 'Internal Server Error' })

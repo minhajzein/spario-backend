@@ -41,7 +41,7 @@ export const getTransactionsByStore = async (req, res) => {
             .sort({ date: -1 });
 
         // Only apply skip/limit if `limit` is present and not 'null'
-        if (limit && limit !== 'null') {
+        if (limit && limit !== 'null' && limit !== 'export') {
             const skip = (Number(page) - 1) * Number(limit);
             findQuery.skip(skip).limit(Number(limit));
         }
@@ -61,7 +61,7 @@ export const getTransactionsByStore = async (req, res) => {
 
 export const getTransactionsByExecutive = async (req, res) => {
     try {
-        const { store, date, type, fromDate, toDate, page = 1, limit = 10 } = req.query;
+        const { store, date, type, fromDate, toDate, search, page, limit } = req.query;
         const { id } = req.params
 
         const query = {}
@@ -70,6 +70,21 @@ export const getTransactionsByExecutive = async (req, res) => {
         query.entry = 'credit'
         if (store && store !== 'null') query.store = store
         if (type && type !== 'null') query.type = type
+        
+        if (search && search !== 'null') {
+            const regex = new RegExp(search, 'i')
+            // Search by type or store name
+            const stores = await Store.find({ 
+                executive: id,
+                storeName: regex 
+            }).select('_id')
+            const storeIds = stores.map(store => store._id)
+            
+            query.$or = [
+                { type: regex },
+                { store: { $in: storeIds } }
+            ]
+        }
 
         if (date && date !== 'null') {
             const parsedDate = new Date(date);
@@ -84,16 +99,18 @@ export const getTransactionsByExecutive = async (req, res) => {
             if (fromDate && fromDate !== 'null') query.date.$gte = new Date(fromDate);
             if (toDate && toDate !== 'null') query.date.$lte = new Date(toDate);
         }
+        let skip = 0;
 
-
-        const skip = (page - 1) * limit;
+        if (limit && limit !== 'export' && limit !== 'null') {
+            skip = (page - 1) * limit;
+        }
 
         const [transactions, total] = await Promise.all([
             Transaction.find(query)
                 .populate('store executive')
                 .sort({ date: -1 })
                 .skip(Number(skip))
-                .limit(Number(limit)),
+                .limit(Number(limit !== 'export' && limit !== 'null' ? limit : null)),
             Transaction.countDocuments(query)
         ]);
 

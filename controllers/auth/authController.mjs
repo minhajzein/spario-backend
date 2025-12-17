@@ -44,8 +44,8 @@ export const login = async (req, res) => {
             res.status(200)
                 .cookie('user', refreshToken, {
                     httpOnly: true,
-                    secure: true,
-                    sameSite: 'None',
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
                     maxAge: 24 * 60 * 60 * 1000
                 })
                 .send({ success: true, token: userToken, user: user })

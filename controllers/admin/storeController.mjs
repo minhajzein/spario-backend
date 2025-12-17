@@ -6,11 +6,44 @@ import Return from '../../models/returnModel.mjs'
 
 export const getAllStores = async (req, res) => {
     try {
-        const stores = await Store.find().sort({ createdAt: -1 }).populate({
+        const { search, page = 1, limit } = req.query
+
+        const query = {}
+
+        if (search && search !== 'null' && search !== '') {
+            const regex = new RegExp(search, 'i')
+            const searchConditions = [
+                { storeName: regex },
+                { ownerName: regex }
+            ]
+            
+            // Only search by contactNumber if search is a number
+            const contactNumber = Number(search)
+            if (!isNaN(contactNumber)) {
+                searchConditions.push({ contactNumber: contactNumber })
+            }
+            
+            query.$or = searchConditions
+        }
+
+        const findQuery = Store.find(query)
+            .sort({ createdAt: -1 })
+            .populate({
             path: 'executive',
             select: 'username'
         })
-        res.status(200).json(stores)
+
+        if (limit && limit !== 'null') {
+            const skip = (Number(page) - 1) * Number(limit)
+            findQuery.skip(skip).limit(Number(limit))
+        }
+
+        const [stores, total] = await Promise.all([
+            findQuery,
+            Store.countDocuments(query)
+        ])
+
+        res.status(200).json({ stores, total })
     } catch (error) {
         console.log(error);
         res.send({ success: false, message: 'Internal Server Error' })
@@ -18,19 +51,59 @@ export const getAllStores = async (req, res) => {
 }
 
 export const getStoresByExecutive = async (req, res) => {
-    const { id } = req.params
-    const query = {}
-
-    if (id && id !== 'null') {
-        query.executive = id
-    }
-
     try {
-        const stores = await Store.find(query).sort({ createdAt: -1 }).populate({
-            path: 'executive',
-            select: 'username'
-        })
-        res.status(200).json(stores)
+        const { id } = req.params
+        const { search, page = 1, limit } = req.query
+
+        const query = {}
+
+        if (id && id !== 'null') {
+            query.executive = id
+        }
+
+        if (search && search !== 'null' && search !== '') {
+            const regex = new RegExp(search, 'i')
+            const searchConditions = [
+                { storeName: regex },
+                { ownerName: regex }
+            ]
+            
+            // Only search by contactNumber if search is a number
+            const contactNumber = Number(search)
+            if (!isNaN(contactNumber)) {
+                searchConditions.push({ contactNumber: contactNumber })
+            }
+            
+            // If executive filter exists, combine with $and to ensure both conditions are met
+            if (query.executive) {
+                query.$and = [
+                    { executive: query.executive },
+                    { $or: searchConditions }
+                ]
+                delete query.executive
+            } else {
+                query.$or = searchConditions
+            }
+        }
+
+        const findQuery = Store.find(query)
+            .sort({ createdAt: -1 })
+            .populate({
+                path: 'executive',
+                select: 'username'
+            })
+
+        if (limit && limit !== 'null') {
+            const skip = (Number(page) - 1) * Number(limit)
+            findQuery.skip(skip).limit(Number(limit))
+        }
+
+        const [stores, total] = await Promise.all([
+            findQuery,
+            Store.countDocuments(query)
+        ])
+
+        res.status(200).json({ stores, total })
     } catch (error) {
         console.log(error);
         res.send({ success: false, message: 'Internal Server Error' })

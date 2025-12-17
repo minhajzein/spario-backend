@@ -4,8 +4,44 @@ import Transaction from '../../models/transactionModel.mjs'
 
 export const getInvoices = async (req, res) => {
     try {
-        const invoices = await Invoice.find().populate('store', 'storeName').sort({ createdAt: -1 });
-        res.status(200).json(invoices);
+        const { search, page = 1, limit } = req.query
+
+        const query = {}
+
+        if (search && search !== 'null') {
+            const regex = new RegExp(search, 'i')
+            // Search by reference or store name
+            const stores = await Store.find({ storeName: regex }).select('_id')
+            const storeIds = stores.map(store => store._id)
+            
+            query.$or = [
+                { reference: regex },
+                { store: { $in: storeIds } }
+            ]
+        }
+
+        const findQuery = Invoice.find(query)
+            .populate({
+                path: 'store',
+                select: 'storeName executive',
+                populate: {
+                    path: 'executive',
+                    select: 'username'
+                }
+            })
+            .sort({ createdAt: -1 })
+
+        if (limit && limit !== 'null') {
+            const skip = (Number(page) - 1) * Number(limit)
+            findQuery.skip(skip).limit(Number(limit))
+        }
+
+        const [invoices, total] = await Promise.all([
+            findQuery,
+            Invoice.countDocuments(query)
+        ])
+
+        res.status(200).json({ invoices, total })
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });

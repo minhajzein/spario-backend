@@ -1,6 +1,7 @@
 import Return from '../../models/returnModel.mjs'
 import Store from '../../models/storeModel.mjs'
 import Transaction from '../../models/transactionModel.mjs'
+import Executive from '../../models/userModel.mjs'
 
 export const createReturn = async (req, res) => {
     try {
@@ -41,11 +42,41 @@ export const createReturn = async (req, res) => {
 
 export const getAllReturns = async (req, res) => {
     try {
-        const returns = await Return.find().sort({ createdAt: -1 })
+        const { search, page = 1, limit } = req.query
+
+        const query = {}
+
+        if (search && search !== 'null') {
+            const regex = new RegExp(search, 'i')
+            // Search by type, store name, or executive name
+            const stores = await Store.find({ storeName: regex }).select('_id')
+            const storeIds = stores.map(store => store._id)
+            const executives = await Executive.find({ username: regex }).select('_id')
+            const executiveIds = executives.map(exec => exec._id)
+            
+            query.$or = [
+                { type: regex },
+                { store: { $in: storeIds } },
+                { executive: { $in: executiveIds } }
+            ]
+        }
+
+        const findQuery = Return.find(query)
+            .sort({ createdAt: -1 })
             .populate('store')
             .populate('executive')
 
-        res.status(200).json(returns)
+        if (limit && limit !== 'null') {
+            const skip = (Number(page) - 1) * Number(limit)
+            findQuery.skip(skip).limit(Number(limit))
+        }
+
+        const [returns, total] = await Promise.all([
+            findQuery,
+            Return.countDocuments(query)
+        ])
+
+        res.status(200).json({ returns, total })
 
     } catch (error) {
         console.log(error);
@@ -56,8 +87,40 @@ export const getAllReturns = async (req, res) => {
 
 export const getReturnsByExecutive = async (req, res) => {
     try {
-        const returns = await Return.find({ executive: req.params.id }).sort({ createdAt: -1 }).populate('store')
-        res.status(200).json(returns)
+        const { search, page = 1, limit } = req.query
+
+        const query = { executive: req.params.id }
+
+        if (search && search !== 'null') {
+            const regex = new RegExp(search, 'i')
+            // Search by type or store name
+            const stores = await Store.find({ 
+                executive: req.params.id,
+                storeName: regex 
+            }).select('_id')
+            const storeIds = stores.map(store => store._id)
+            
+            query.$or = [
+                { type: regex },
+                { store: { $in: storeIds } }
+            ]
+        }
+
+        const findQuery = Return.find(query)
+            .sort({ createdAt: -1 })
+            .populate('store')
+
+        if (limit && limit !== 'null') {
+            const skip = (Number(page) - 1) * Number(limit)
+            findQuery.skip(skip).limit(Number(limit))
+        }
+
+        const [returns, total] = await Promise.all([
+            findQuery,
+            Return.countDocuments(query)
+        ])
+
+        res.status(200).json({ returns, total })
     } catch (error) {
         console.log(error);
         res.send({ success: false, message: 'Internal Server Error' })
